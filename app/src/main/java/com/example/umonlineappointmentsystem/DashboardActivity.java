@@ -1,6 +1,10 @@
 package com.example.umonlineappointmentsystem;
 
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -32,6 +36,24 @@ public class DashboardActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_dashboard);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        homeFragment();
+
+    }
+
+    private void homeFragment()
+    {
+        EditText et_name = (EditText) findViewById(R.id.et_name);
+        Button button = (Button) findViewById(R.id.button);
+        CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox2);
+
+        button.setOnClickListener(view -> {
+            if(checkBox.isChecked() && !et_name.getText().toString().isEmpty()) {
+                Toast.makeText(this, et_name.getText().toString(), Toast.LENGTH_LONG).show();
+
+            }
+            else
+                Toast.makeText(this, "Please agree with us!", Toast.LENGTH_LONG).show();
+        });
     }
 
 }
