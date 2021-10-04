@@ -13,19 +13,19 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.umonlineappointmentsystem.R;
-import com.example.umonlineappointmentsystem.databinding.FragmentNotificationsBinding;
+import com.example.umonlineappointmentsystem.databinding.FragmentUserBinding;
 
 public class NotificationsFragment extends Fragment {
 
     private NotificationsViewModel notificationsViewModel;
-    private FragmentNotificationsBinding binding;
+    private FragmentUserBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         notificationsViewModel =
                 new ViewModelProvider(this).get(NotificationsViewModel.class);
 
-        binding = FragmentNotificationsBinding.inflate(inflater, container, false);
+        binding = FragmentUserBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         return root;

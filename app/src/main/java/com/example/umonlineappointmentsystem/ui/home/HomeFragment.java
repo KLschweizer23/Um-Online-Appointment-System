@@ -13,19 +13,19 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.umonlineappointmentsystem.R;
-import com.example.umonlineappointmentsystem.databinding.FragmentHomeBinding;
+import com.example.umonlineappointmentsystem.databinding.FragmentFormBinding;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
-    private FragmentHomeBinding binding;
+    private FragmentFormBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentFormBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         return root;
