@@ -130,4 +130,11 @@ public class NotificationsFragment extends Fragment implements GoogleApiClient.O
             });
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        googleApiClient.stopAutoManage(getActivity());
+        googleApiClient.disconnect();
+    }
 }
