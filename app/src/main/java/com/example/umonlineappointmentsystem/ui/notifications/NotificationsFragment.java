@@ -53,6 +53,7 @@ public class NotificationsFragment extends Fragment implements GoogleApiClient.O
                 new ViewModelProvider(this).get(NotificationsViewModel.class);
 
         fragmentView = inflater.inflate(R.layout.fragment_user, container, false);
+
         binding = FragmentUserBinding.inflate(inflater, container, false);
 
         thisContext = getActivity().getApplicationContext();
@@ -62,7 +63,6 @@ public class NotificationsFragment extends Fragment implements GoogleApiClient.O
 
         return fragmentView;
     }
-
     private void initializeComponents(){
         tv_email = fragmentView.findViewById(R.id.tv_email);
         img_user = fragmentView.findViewById(R.id.img_user);
@@ -80,14 +80,14 @@ public class NotificationsFragment extends Fragment implements GoogleApiClient.O
                 if(status.isSuccess()){
                     goToLoginActivity();
                 }else{
-                    Toast.makeText(getActivity().getApplicationContext(), "Logout Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(thisContext, "Logout Failed!", Toast.LENGTH_SHORT).show();
                 }
             });
         });
     }
 
     private void goToLoginActivity() {
-        startActivity(new Intent(getActivity().getApplicationContext(), LoginActivity.class));
+        startActivity(new Intent(thisContext, LoginActivity.class));
         getActivity().finish();
     }
 
@@ -106,8 +106,10 @@ public class NotificationsFragment extends Fragment implements GoogleApiClient.O
     private void handleSignInResult(GoogleSignInResult result){
         if(result.isSuccess()){
             GoogleSignInAccount account = result.getSignInAccount();
-            tv_email.setText(account.getEmail());
-
+            String accountEmail = account.getEmail();
+            String finalEmail = accountEmail.length() > 15 ? accountEmail.substring(0, 15) + "..." : accountEmail;
+            tv_email.setText(finalEmail);
+            
             Picasso.get().load(account.getPhotoUrl()).placeholder(R.drawable.user_profile).into(img_user);
         }else{
             goToLoginActivity();
