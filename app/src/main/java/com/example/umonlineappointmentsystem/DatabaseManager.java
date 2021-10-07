@@ -68,7 +68,7 @@ public class DatabaseManager {
     }
 
     public void setTableDataForUser(TableLayout tableLayout, GoogleSignInAccount account){
-        
+
     }
 
     public void setTableData(TableLayout tableLayout, String date){
