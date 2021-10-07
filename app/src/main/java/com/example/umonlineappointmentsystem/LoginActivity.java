@@ -115,22 +115,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         AccountObject ao = new AccountObject(id, displayName, email, expiration, umindanaoAccount);
 
-        reference.orderByChild("accounts").equalTo(id).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-
-                }else{
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
         reference.child(id).setValue(ao);
     }
     private String setExpiration(GoogleSignInAccount account){
