@@ -100,12 +100,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     protected void processDatabase(GoogleSignInAccount account){
-        FirebaseDatabase rootNode;
-        DatabaseReference reference;
-
-        rootNode = FirebaseDatabase.getInstance();
-        reference = rootNode.getReference("accounts");
-
 
         String id = account.getId();
         String displayName = account.getDisplayName();
@@ -115,7 +109,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         AccountObject ao = new AccountObject(id, displayName, email, expiration, umindanaoAccount);
 
-        reference.child(id).setValue(ao);
+        DatabaseManager dm = new DatabaseManager("accounts");
+        dm.addAccount(ao);
     }
     private String setExpiration(GoogleSignInAccount account){
         String returnValue = "";

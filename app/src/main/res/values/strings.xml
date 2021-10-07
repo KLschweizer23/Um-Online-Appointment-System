@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Um Online Appointment System</string>
     <string name="title_activity_dashboard">DashboardActivity</string>
-    <string name="title_home">Home</string>
+    <string name="title_home">Appointment Form</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">User</string>
 </resources>
