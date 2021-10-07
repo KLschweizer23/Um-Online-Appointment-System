@@ -1,9 +1,12 @@
 package com.example.umonlineappointmentsystem.ui.home;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,8 @@ public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private FragmentFormBinding binding;
+    private View fragmentView;
+    private Context thisContext;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -26,9 +31,15 @@ public class HomeFragment extends Fragment {
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentFormBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+       fragmentView = inflater.inflate(R.layout.fragment_user,container,false);
+       thisContext = getActivity().getApplicationContext();
+       appointmentMethod();
 
-        return root;
+       return fragmentView;
+
+    }
+    private void appointmentMethod(){
+
     }
 
     @Override

@@ -82,7 +82,7 @@
         app:layout_constraintTop_toBottomOf="@+id/et_email" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/et_yearcourse"
+        android:id="@+id/et_yearCourse"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="358dp"
         android:layout_height="87dp"
@@ -109,7 +109,7 @@
         android:layout_marginTop="4dp"
         android:text="I have agreed and accepted that my appointment will be added within at least 3 days from submission date."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_yearcourse" />
+        app:layout_constraintTop_toBottomOf="@+id/et_yearCourse" />
 
     <Button
         android:id="@+id/button2"
