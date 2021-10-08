@@ -19,12 +19,21 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.umonlineappointmentsystem.AppointmentObject;
+import com.example.umonlineappointmentsystem.DatabaseManager;
 import com.example.umonlineappointmentsystem.R;
 import com.example.umonlineappointmentsystem.databinding.FragmentFormBinding;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener{
 
     private HomeViewModel homeViewModel;
     private FragmentFormBinding binding;
@@ -35,6 +44,7 @@ public class HomeFragment extends Fragment {
     private  Spinner drp_purpose;
     private CheckBox cb_agreement;
     private Button button2;
+    private GoogleSignInAccount account;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -75,6 +85,16 @@ public class HomeFragment extends Fragment {
                       Toast.makeText(thisContext, "Please fill up the form!", Toast.LENGTH_SHORT).show();
                   }
                   else {
+                      String id = account.getId();
+                      String date = new DatabaseManager("appointments").getCurrentDate(0);
+                      String name = et_name.getText().toString();
+                      String email = et_email.getText().toString();
+                      String yearCourse = et_yearCourse.getText().toString();
+                      String purpose = drp_purpose.getSelectedItem().toString();
+
+                      AppointmentObject ao = new AppointmentObject(id, name, email, purpose, yearCourse, date);
+                      DatabaseManager dm = new DatabaseManager("appointments");
+                      dm.submitForm(account, ao);
                       Toast.makeText(thisContext, "Appointment form submitted!", Toast.LENGTH_SHORT).show();
                   }
               }
@@ -82,8 +102,34 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+
+        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(thisContext).enableAutoManage(getActivity(), this)
+
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        GoogleSignInResult result = opr.get();
+        if(opr.isDone()){
+
+                account = result.getSignInAccount();
+        }else{
+            opr.setResultCallback(googleSignInResult -> {
+                account = result.getSignInAccount();
+            });
+        }
+
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 }
