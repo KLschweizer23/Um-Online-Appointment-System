@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.umonlineappointmentsystem.AppointmentObject;
-import com.example.umonlineappointmentsystem.DashboardActivity;
 import com.example.umonlineappointmentsystem.DatabaseManager;
 import com.example.umonlineappointmentsystem.R;
 import com.example.umonlineappointmentsystem.databinding.FragmentDashboardBinding;
@@ -78,7 +77,6 @@ public class DashboardFragment extends Fragment {
             int newYear = Integer.parseInt(selectedDate.substring(0,4));
             int newMonth = Integer.parseInt(selectedDate.substring(5,7));
             int newDay = Integer.parseInt(selectedDate.substring(8));
-            //newYear + "-" + newMonth + "-" + newDay
 
             DatePickerDialog dialog = new DatePickerDialog(getActivity(),
                     android.R.style.Theme_Holo_Light_Dialog_MinWidth,

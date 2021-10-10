@@ -46,7 +46,6 @@ public class HomeFragment extends Fragment implements GoogleApiClient.OnConnecti
     private Button button2;
     private GoogleSignInAccount account;
 
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
@@ -110,16 +109,17 @@ public class HomeFragment extends Fragment implements GoogleApiClient.OnConnecti
 
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
-        GoogleSignInResult result = opr.get();
         if(opr.isDone()){
-
+            GoogleSignInResult result = opr.get();
                 account = result.getSignInAccount();
         }else{
             opr.setResultCallback(googleSignInResult -> {
+                GoogleSignInResult result = opr.get();
                 account = result.getSignInAccount();
             });
         }
-
+        googleApiClient.stopAutoManage(getActivity());
+        googleApiClient.disconnect();
     }
 
     @Override
@@ -127,7 +127,6 @@ public class HomeFragment extends Fragment implements GoogleApiClient.OnConnecti
         super.onDestroyView();
         binding = null;
     }
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 

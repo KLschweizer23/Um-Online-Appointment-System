@@ -3,6 +3,7 @@ package com.example.umonlineappointmentsystem;
 import android.content.Context;
 import android.graphics.Color;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,8 +15,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
@@ -50,7 +57,7 @@ public class DatabaseManager {
 
     public void submitForm(GoogleSignInAccount account, AppointmentObject ao){
         if(referenceName.equals(appointments)){
-            int plusDays = 3;
+            int plusDays = 2;
             do{
                 plusDays++;
                 reference.child(getCurrentDate(plusDays)).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -142,6 +149,50 @@ public class DatabaseManager {
     public String getCurrentDate(int plusDays){
         LocalDate currentDate = LocalDate.now().plusDays(plusDays);
         return currentDate.toString();
+    }
+
+    public int getTodayInterval(String expoDate){
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        String endDate = expoDate;
+
+        DateTimeZone PHILIPPINES = DateTimeZone.forID(("Philippines"));
+        DateTime start = new DateTime(year, month, day, 0, 0, PHILIPPINES);
+        DateTime end = new DateTime(Integer.parseInt(endDate.substring(0,4)), Integer.parseInt(endDate.substring(5,7)), Integer.parseInt(endDate.substring(8)), 0 ,0, PHILIPPINES);
+        int days = Days.daysBetween(start.toLocalDate(), end.toLocalDate()).getDays();
+        return days;
+    }
+
+    public void setCurrentAccount(TextView tv_accountType, GoogleSignInAccount account){
+
+        if(referenceName.equals("appointments"))
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    for(DataSnapshot ds : snapshot.getChildren())
+                    {
+                        if(ds.getKey().equals(account.getId()))
+                        {
+                            AccountObject ao = ds.getValue(AccountObject.class);
+                            if(ao.getEmail().contains("umindanao.edu")){
+                                tv_accountType.setText("Permanent Account");
+                            }else{
+                                int interval = getTodayInterval(ao.getExpiration());
+                                tv_accountType.setText("Temporary Account: " + interval + " days!");
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
     }
 
 }
