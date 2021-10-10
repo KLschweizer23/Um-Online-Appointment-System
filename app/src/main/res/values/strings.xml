@@ -3,5 +3,16 @@
     <string name="title_activity_dashboard">DashboardActivity</string>
     <string name="title_home">Appointment Form</string>
     <string name="title_dashboard">Dashboard</string>
+
+
+    <string-array name="purpose">
+        <item>Enrollment</item>
+        <item>Transaction</item>
+        <item>Balance</item>
+        <item>Scholarship</item>
+        <item>Others</item>
+    </string-array>
+
     <string name="title_notifications">User</string>
+
 </resources>

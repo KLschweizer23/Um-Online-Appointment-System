@@ -1,6 +1,10 @@
 {
   "project_info": {
     "project_number": "169098199021",
+
+    "firebase_url": "https://um-online-appointment-system-default-rtdb.firebaseio.com",
+
+
     "project_id": "um-online-appointment-system",
     "storage_bucket": "um-online-appointment-system.appspot.com"
   },

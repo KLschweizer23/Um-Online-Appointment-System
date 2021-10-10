@@ -5,6 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+
+
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+
+import android.widget.Spinner;
+
 import android.os.Handler;
 import android.util.Pair;
 import android.view.View;
@@ -13,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         topAnim = AnimationUtils.loadAnimation(this, R.anim.up_animation);
         bottomAnim = AnimationUtils.loadAnimation(this, R.anim.down_animation);
@@ -49,5 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         },5000);
+
     }
+
+
 }
