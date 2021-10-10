@@ -1,5 +1,7 @@
 package com.example.umonlineappointmentsystem;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
@@ -13,6 +15,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+
+import de.codecrafters.tableview.TableView;
+import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
+import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 
 public class DatabaseManager {
 
@@ -43,7 +50,7 @@ public class DatabaseManager {
 
     public void submitForm(GoogleSignInAccount account, AppointmentObject ao){
         if(referenceName.equals(appointments)){
-            int plusDays = -1;
+            int plusDays = 3;
             do{
                 plusDays++;
                 reference.child(getCurrentDate(plusDays)).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -67,12 +74,69 @@ public class DatabaseManager {
         }
     }
 
-    public void setTableDataForUser(TableLayout tableLayout, GoogleSignInAccount account){
+    public void setTableDataForUser(TableView tableView, GoogleSignInAccount account, Context passedContext){
+        if(referenceName.equals("appointments") && account.getEmail().contains("umindanao.edu"))
+            reference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot ds : snapshot.getChildren())
+                        setTableData(tableView, ds.getKey(), passedContext, true, account);
+                }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
     }
 
-    public void setTableData(TableLayout tableLayout, String date){
+    public void setTableData(TableView<String[]> tableView, String selectedDate, Context passedContext, boolean getUser, GoogleSignInAccount account){
+        if(referenceName.equals("appointments"))
+            reference.child(selectedDate).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    ArrayList<AppointmentObject> aoList = new ArrayList<>();
+                    String[] appointmentHeaders = getUser ? new String[]{"#", "Where", "Purpose"} : new String[]{"#", "Name", "Purpose"};
+                    String[][] appointments;
 
+                    for(DataSnapshot ds : snapshot.getChildren())
+                    {
+                        if(!getUser) {
+                            AppointmentObject ao = ds.getValue(AppointmentObject.class);
+                            aoList.add(ao);
+                        }else{
+                            if(ds.getKey().equals(account.getId()))
+                            {
+                                AppointmentObject ao = ds.getValue(AppointmentObject.class);
+                                aoList.add(ao);
+                            }
+                        }
+                    }
+
+                    appointments = new String[aoList.size()][3];
+
+                    for(int i = 0; aoList.size() > i; i++) {
+                        AppointmentObject ao = aoList.get(i);
+
+                        appointments[i][0] = i + 1 + "";
+                        appointments[i][1] = ao.getName();
+                        appointments[i][2] = ao.getPurpose();
+                    }
+                    tableView.setColumnCount(3);
+                    tableView.setHeaderBackgroundColor(Color.parseColor("#880000"));
+
+                    SimpleTableHeaderAdapter headerAdapter = new SimpleTableHeaderAdapter(passedContext, appointmentHeaders);
+                    headerAdapter.setTextColor(Color.parseColor("#ffffff"));
+
+                    tableView.setHeaderAdapter(headerAdapter);
+                    tableView.setDataAdapter(new SimpleTableDataAdapter(passedContext, appointments));
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
     }
 
     public String getCurrentDate(int plusDays){

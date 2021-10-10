@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.umonlineappointmentsystem.AppointmentObject;
 import com.example.umonlineappointmentsystem.DashboardActivity;
+import com.example.umonlineappointmentsystem.DatabaseManager;
 import com.example.umonlineappointmentsystem.R;
 import com.example.umonlineappointmentsystem.databinding.FragmentDashboardBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -41,6 +43,8 @@ public class DashboardFragment extends Fragment {
     private TextView tv_date;
     private DatePickerDialog.OnDateSetListener dateSetListener;
 
+    private String selectedDate;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
@@ -56,72 +60,48 @@ public class DashboardFragment extends Fragment {
     }
 
     private void processDate(){
-        tv_date = (TextView) fragmentView.findViewById(R.id.tv_date);
+
+        tv_date = fragmentView.findViewById(R.id.tv_date);
+
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String[] days = {"01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31"};
+
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        tv_date.setText(months[month] + " " + days[day - 1] + ", " + year);
+        selectedDate = year + "-" + days[month] + "-" + days[day - 1];
 
         tv_date.setOnClickListener(view -> {
-            Calendar cal = Calendar.getInstance();
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int day = cal.get(Calendar.DAY_OF_MONTH);
+            int newYear = Integer.parseInt(selectedDate.substring(0,4));
+            int newMonth = Integer.parseInt(selectedDate.substring(5,7));
+            int newDay = Integer.parseInt(selectedDate.substring(8));
+            //newYear + "-" + newMonth + "-" + newDay
 
             DatePickerDialog dialog = new DatePickerDialog(getActivity(),
                     android.R.style.Theme_Holo_Light_Dialog_MinWidth,
                     dateSetListener,
-                    year,month,day);
+                    newYear,--newMonth,newDay);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             dialog.show();
         });
 
         dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
 
+                tv_date.setText(months[month] + " " + days[day - 1] + ", " + year);
+                selectedDate = year + "-" + days[month] + "-" + days[day - 1];
+                processData();
             }
         };
     }
     private void processData(){
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("appointments");
-
-        ref.child("2021-10-08").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ArrayList<AppointmentObject> aoList = new ArrayList<>();
-                String[] appointmentHeaders = {"#", "Name", "Purpose"};
-                String[][] appointments;
-
-                for(DataSnapshot ds : snapshot.getChildren())
-                {
-                    AppointmentObject ao = ds.getValue(AppointmentObject.class);
-                    aoList.add(ao);
-                }
-
-                appointments = new String[aoList.size()][3];
-
-                for(int i = 0; aoList.size() > i; i++) {
-                    AppointmentObject ao = aoList.get(i);
-
-                    appointments[i][0] = i + 1 + "";
-                    appointments[i][1] = ao.getName();
-                    appointments[i][2] = ao.getPurpose();
-                }
-                final TableView<String[]> tableView = (TableView<String[]>) fragmentView.findViewById(R.id.tableView);
-                tableView.setColumnCount(3);
-                tableView.setHeaderBackgroundColor(Color.parseColor("#880000"));
-
-                SimpleTableHeaderAdapter headerAdapter = new SimpleTableHeaderAdapter(getActivity(), appointmentHeaders);
-                headerAdapter.setTextColor(Color.parseColor("#ffffff"));
-
-                tableView.setHeaderAdapter(headerAdapter);
-                tableView.setDataAdapter(new SimpleTableDataAdapter(getActivity(), appointments));
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        final TableView<String[]> tableView = (TableView<String[]>) fragmentView.findViewById(R.id.tableView);
+        DatabaseManager dm = new DatabaseManager("appointments");
+        dm.setTableData(tableView, selectedDate, getActivity(), false, null);
     }
 
     @Override
