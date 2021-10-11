@@ -2,6 +2,7 @@ package com.example.umonlineappointmentsystem;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,8 +87,37 @@ public class DatabaseManager {
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    ArrayList<AppointmentObject> aoList = new ArrayList<>();
+                    String[] appointmentHeaders = {"#", "When", "Purpose"};
+                    String[][] appointments;
+
                     for(DataSnapshot ds : snapshot.getChildren())
-                        setTableData(tableView, ds.getKey(), passedContext, true, account);
+                    {
+                        for(DataSnapshot ds2 : ds.getChildren()){
+                            if(ds2.getKey().equals(account.getId()))
+                            {
+                                AppointmentObject ao = ds2.getValue(AppointmentObject.class);
+                                aoList.add(ao);
+                            }
+                        }
+                    }
+                    appointments = new String[aoList.size()][3];
+
+                    for(int i = 0; aoList.size() > i; i++) {
+                        AppointmentObject ao = aoList.get(i);
+
+                        appointments[i][0] = i + 1 + "";
+                        appointments[i][1] = ao.getName();
+                        appointments[i][2] = ao.getPurpose();
+                    }
+                    tableView.setColumnCount(3);
+                    tableView.setHeaderBackgroundColor(Color.parseColor("#880000"));
+
+                    SimpleTableHeaderAdapter headerAdapter = new SimpleTableHeaderAdapter(passedContext, appointmentHeaders);
+                    headerAdapter.setTextColor(Color.parseColor("#ffffff"));
+
+                    tableView.setHeaderAdapter(headerAdapter);
+                    tableView.setDataAdapter(new SimpleTableDataAdapter(passedContext, appointments));
                 }
 
                 @Override
@@ -108,18 +138,14 @@ public class DatabaseManager {
 
                     for(DataSnapshot ds : snapshot.getChildren())
                     {
+                        Log.d("Key", ds.getKey());
                         if(!getUser) {
                             AppointmentObject ao = ds.getValue(AppointmentObject.class);
                             aoList.add(ao);
                         }else{
-                            if(ds.getKey().equals(account.getId()))
-                            {
-                                AppointmentObject ao = ds.getValue(AppointmentObject.class);
-                                aoList.add(ao);
-                            }
+
                         }
                     }
-
                     appointments = new String[aoList.size()][3];
 
                     for(int i = 0; aoList.size() > i; i++) {
